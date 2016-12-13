@@ -8,31 +8,28 @@ import {
 } from 'react-native';
 
 
-var WheelCurvedPicker = React.createClass ({
-
+var WheelCurvedPicker = React.createClass({
 	propTypes: {
 		...View.propTypes,
-
 		data: React.PropTypes.array,
-
 		textColor: ColorPropType,
-
 		textSize: React.PropTypes.number,
-
 		itemStyle: React.PropTypes.object,
-
 		itemSpace: React.PropTypes.number,
-
 		onValueChange: React.PropTypes.func,
-
 		selectedValue: React.PropTypes.any,
-
 		selectedIndex: React.PropTypes.number,
+		cyclic: React.PropTypes.bool,
+		curved: React.PropTypes.bool,
+		atmospheric: React.PropTypes.bool,
+		indicator: React.PropTypes.bool,
+		indicatorColor: ColorPropType,
+		indicatorSize: React.PropTypes.number
 	},
 
 	getDefaultProps(): Object {
 		return {
-			itemStyle : {color:"white", fontSize:26},
+			itemStyle : {color: 'white', fontSize:26},
 			itemSpace: 20,
 		};
 	},
@@ -55,8 +52,8 @@ var WheelCurvedPicker = React.createClass ({
 			items.push({value: child.props.value, label: child.props.label});
 		});
 
-		var textSize = props.itemStyle.fontSize
-		var textColor = props.itemStyle.color
+		var textSize = props.itemStyle.fontSize;
+		var textColor = props.itemStyle.color;
 
 		return {selectedIndex, items, textSize, textColor};
 	},
@@ -74,7 +71,7 @@ var WheelCurvedPicker = React.createClass ({
 				data={this.state.items}
 				textColor={this.state.textColor}
 				textSize={this.state.textSize}
-				selectedIndex={parseInt(this.state.selectedIndex)} />;
+				selectedIndex={parseInt(this.state.selectedIndex, 10)} />;
 	}
 });
 
