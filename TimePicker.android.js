@@ -1,0 +1,227 @@
+import React, { Component } from 'react';
+import {
+  AppRegistry,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+
+import Picker from 'react-native-wheel-picker';
+import moment from 'moment';
+import _ from 'lodash';
+
+getHours = () => {
+  return [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+}
+
+getMinutes = (minuteInterval) => {
+  const minutes = _.range(0,60);
+  return _.filter(minutes, minute => { return minute % minuteInterval === 0 })
+}
+
+getPeriods = (isPeriodCapitalized) => {
+  if (isPeriodCapitalized) {
+    return ['AM', 'PM'];
+  }
+
+  return ['am', 'pm'];
+}
+
+export class TimePicker extends React.Component {
+  constructor(props) {
+    super(props);
+    const {
+      date,
+      is24Hrs,
+      minuteInterval,
+      isPeriodCapitalized
+    } = props;
+    const hour = moment(date).hours();
+    const minute = moment(date).minutes();
+    this.state = {
+      ...props,
+      periodSelected: 0,
+      hourSelected: hour,
+      minuteSelected: minute,
+      hoursList: getHours(),
+      minutesList: getMinutes(minuteInterval),
+      periodsList: getPeriods(isPeriodCapitalized),
+    };
+  }
+  componentWillReceiveProps(nextProps) {
+    var stateObj = this.state;
+    console.log(nextProps.minutesList, this.props.minutesList);
+    if (nextProps.minuteInterval !== this.props.minuteInterval) {
+      stateObj.minutesList = getMinutes(nextProps.minuteInterval);
+    }
+    stateObj = {
+      ...stateObj,
+      ...nextProps
+    }
+    this.setState(stateObj);
+  }
+  componentWillUpdate(nextProps, nextState) {
+    if (!nextState.backgroundUpdate && (nextState.hourSelected !== this.state.hourSelected)) {
+      const isNewHourSelectedMorning = nextState.hourSelected - 12 < 0;
+      const isCurrentHourSelectMorning = this.state.hourSelected - 12 < 0;
+      if (isNewHourSelectedMorning !== isCurrentHourSelectMorning) {
+        this.setState({
+          periodSelected:  isNewHourSelectedMorning ? 0 : 1,
+          backgroundUpdate: true,
+        });
+      }
+    }
+    if (!nextState.backgroundUpdate && (nextState.periodSelected !== this.state.periodSelected)) {
+      this.setState({
+        hourSelected: nextState.hourSelected - (nextState.periodSelected === 0 ? 12 : -12),
+        backgroundUpdate: true,
+      });
+    }
+  }
+  // renderPeriod = () => {
+  //   if (!this.state.is24Hrs) {
+  //     return (
+  //       <Picker
+  //         style={[{ width: 50, height: 170 }, this.state.periodPickerStyle]}
+  //         selectedValue={this.state.periodSelected}
+  //         itemStyle={this.state.periodPickerItemStyle}
+  //         atmospheric={this.state.atmospheric}
+  //         indicator={this.state.indicator}
+  //         indicatorSize={this.state.indicatorSize}
+  //         indicatorColor={this.state.indicatorColor}
+  //         onValueChange={(periodSelected) => {
+  //           this.setState({
+  //             periodSelected,
+  //             backgroundUpdate: false,
+  //           })
+  //         }}>
+  //           {this.state.periodsList.map((value, i) => (
+  //             <Picker.Item label={`${value}`} value={i} key={"periodsList"+value}/>
+  //           ))}
+  //       </Picker>
+  //     );
+  //   }
+  //   return <View/>;
+  // }
+  render() {
+    const {
+      date,
+      minuteSelected,
+      hourSelected,
+      periodSelected,
+      hoursList,
+      minutesList,
+      periodsList
+    } = this.state;
+    return (
+      <View style={[{ flexDirection: 'row' }, this.state.style]}>
+        <Picker
+          style={[{ width: 50, height: 170 }, this.state.hourPickerStyle]}
+          selectedValue={hourSelected}
+          itemStyle={this.state.hourPickerItemStyle}
+          curved={this.state.curved}
+          cyclic={this.state.cyclic}
+          atmospheric={this.state.atmospheric}
+          indicator={this.state.indicator}
+          indicatorSize={this.state.indicatorSize}
+          indicatorColor={this.state.indicatorColor}
+          onValueChange={(hourSelected) => {
+            console.log('selectedHour', hourSelected);
+            this.setState({
+              hourSelected,
+              backgroundUpdate: false,
+            });
+          }}>
+            {hoursList.map((value, i) => {
+              return (
+                <Picker.Item label={`${value}`} value={i} key={"hoursList"+i}/>
+              );
+            })}
+        </Picker>
+        <Picker
+          style={[{ width: 50, height: 170 }, this.state.minutePickerStyle]}
+          selectedValue={minuteSelected}
+          itemStyle={this.state.minutePickerItemStyle}
+          curved={this.state.curved}
+          cyclic={this.state.cyclic}
+          atmospheric={this.state.atmospheric}
+          indicator={this.state.indicator}
+          indicatorSize={this.state.indicatorSize}
+          indicatorColor={this.state.indicatorColor}
+          onValueChange={(minuteSelected) => {
+            this.setState({
+              minuteSelected,
+              backgroundUpdate: false,
+            })
+          }}>
+            {minutesList.map((value, i) => {
+              const label = value.toString().length === 1 ? `0${value}` : `${value}`;
+              return (
+                <Picker.Item label={label} value={value} key={"minutesList"+i}/>
+              )
+            })}
+        </Picker>
+        <Picker
+          style={[{ width: 50, height: 170 }, this.state.periodPickerStyle]}
+          selectedValue={periodSelected}
+          itemStyle={this.state.periodPickerItemStyle}
+          atmospheric={this.state.atmospheric}
+          indicator={this.state.indicator}
+          indicatorSize={this.state.indicatorSize}
+          indicatorColor={this.state.indicatorColor}
+          onValueChange={(periodSelected) => {
+            this.setState({
+              periodSelected,
+              backgroundUpdate: false,
+            })
+          }}>
+            {periodsList.map((value, i) => (
+              <Picker.Item label={`${value}`} value={i} key={"periodsList"+i}/>
+            ))}
+        </Picker>
+      </View>
+    );
+  }
+}
+
+TimePicker.defaultProps = {
+  date: new Date(),
+  onDateChange: () => {},
+  minuteInterval: 1,
+  isPeriodCapitalized: true,
+  style: {},
+  periodPickerStyle: {},
+  minutePickerStyle: {},
+  hourPickerStyle: {},
+  periodPickerItemStyle: { color:"black", fontSize:18 },
+  minutePickerItemStyle: { color:"black", fontSize:18 },
+  hourPickerItemStyle: { color:"black", fontSize:18 },
+  indicator: true,
+  indicatorColor: '#ebebeb',
+  indicatorSize: 1,
+  curved: true,
+  atmospheric: false,
+  cyclic: true,
+  is24Hrs: false,
+};
+
+TimePicker.propTypes = {
+  date: React.PropTypes.object.isRequired,
+  onDateChange: React.PropTypes.func,
+  minuteInterval: React.PropTypes.number,
+  isPeriodCapitalized: React.PropTypes.bool,
+  style: React.PropTypes.object,
+  periodPickerStyle: React.PropTypes.object,
+  minutePickerStyle: React.PropTypes.object,
+  hourPickerStyle: React.PropTypes.object,
+  periodPickerItemStyle: React.PropTypes.object,
+  minutePickerItemStyle: React.PropTypes.object,
+  hourPickerItemStyle: React.PropTypes.object,
+  indicator: React.PropTypes.bool,
+  indicatorSize: React.PropTypes.number,
+  indicatorColor: React.PropTypes.string,
+  curved: React.PropTypes.bool,
+  atmospheric: React.PropTypes.bool,
+  cyclic: React.PropTypes.bool,
+  is24Hrs: React.PropTypes.bool,
+};
