@@ -159,6 +159,7 @@ export default class TimePicker extends React.Component {
           selectedValue={periodSelected}
           itemStyle={this.state.periodPickerItemStyle}
           atmospheric={this.state.atmospheric}
+          cyclic={false}
           indicator={this.state.indicator}
           indicatorSize={this.state.indicatorSize}
           indicatorColor={this.state.indicatorColor}
