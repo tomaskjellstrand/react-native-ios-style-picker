@@ -1,25 +1,28 @@
 {
-  "name": "react-native-wheel-picker",
+  "name": "react-native-ios-style-picker",
   "version": "1.1.1",
-  "description": "React native cross platform picker.",
+  "description": "React native ios style picker for android.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lesliesam/react-native-wheel-picker.git"
+    "url": "git+https://github.com/damathryx/react-native-ios-style-picker.git"
   },
   "keywords": [
     "react-native",
     "picker",
-	"wheel"
+	  "wheel",
+    "ios",
+    "date",
+    "time"
   ],
-  "author": "Yu Zheng",
+  "author": "damathryx",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lesliesam/react-native-wheel-picker/issues"
+    "url": "https://github.com/damathryx/react-native-ios-style-picker/issues"
   },
-  "homepage": "https://github.com/lesliesam/react-native-wheel-picker#readme",
+  "homepage": "https://github.com/damathryx/react-native-ios-style-picker#readme",
   "dependencies": {}
 }
