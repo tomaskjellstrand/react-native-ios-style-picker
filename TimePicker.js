@@ -54,35 +54,43 @@ export default class TimePicker extends React.Component {
       periodsList: getPeriods(isPeriodCapitalized),
     };
   }
-  componentWillReceiveProps(nextProps) {
-    var stateObj = this.state;
-    // console.log(nextProps.minutesList, this.props.minutesList);
-    stateObj = {
-      ...stateObj,
-      ...nextProps
-    }
-    if (nextProps.minuteInterval !== this.props.minuteInterval) {
-      var { minuteSelected } = this.state;
-      stateObj.minuteSelected = getNewMinuteSelectedByNewMinuteInterval(minuteSelected, nextProps.minuteInterval);
-      stateObj.minutesList = getMinutes(nextProps.minuteInterval);
-    }
-    this.setState(stateObj);
-  }
+  // componentWillReceiveProps(nextProps) {
+  //   console.log('TimePicker will receive props');
+  //   var stateObj = this.state;
+  //   stateObj = {
+  //     ...stateObj,
+  //     ...nextProps
+  //   }
+  //   if (nextProps.minuteInterval !== this.props.minuteInterval) {
+  //     var { minuteSelected } = this.state;
+  //     stateObj.minuteSelected = getNewMinuteSelectedByNewMinuteInterval(minuteSelected, nextProps.minuteInterval);
+  //     stateObj.minutesList = getMinutes(nextProps.minuteInterval);
+  //   }
+  //   this.setState(stateObj);
+  // }
   componentWillUpdate(nextProps, nextState) {
-    if (nextState.backgroundUpdate) {
-      this._onDateChange(nextState.date, nextState.hourSelected, nextState.minuteSelected);
-    }
-    // if (!nextState.backgroundUpdate && (nextState.hourSelected !== this.state.hourSelected)) {
-    //   const isNewHourSelectedMorning = nextState.hourSelected - 12 < 0;
-    //   const isCurrentHourSelectMorning = this.state.hourSelected - 12 < 0;
-    //   if (isNewHourSelectedMorning !== isCurrentHourSelectMorning) {
-    //     this.setState({
-    //       periodSelected:  isNewHourSelectedMorning ? 0 : 1,
-    //       backgroundUpdate: true,
-    //     });
-    //   }
+    // console.log('TimePicker will update');
+    // if (nextState.backgroundUpdate) {
+    //   this._onDateChange(nextState.date, nextState.hourSelected, nextState.minuteSelected);
     // }
+    if (nextProps.date !== this.props.date) {
+      this.setState({
+        backgroundUpdate: true,
+        date: nextProps.date,
+      });
+    }
+    if (!nextState.backgroundUpdate && (nextState.hourSelected !== this.state.hourSelected)) {
+      const isNewHourSelectedMorning = nextState.hourSelected - 12 < 0;
+      const isCurrentHourSelectMorning = this.state.hourSelected - 12 < 0;
+      if (isNewHourSelectedMorning !== isCurrentHourSelectMorning) {
+        this.setState({
+          periodSelected:  isNewHourSelectedMorning ? 0 : 1,
+          backgroundUpdate: true,
+        });
+      }
+    }
     // if (!nextState.backgroundUpdate && (nextState.periodSelected !== this.state.periodSelected)) {
+    //   console.log('WEW');
     //   this.setState({
     //     hourSelected: nextState.hourSelected - (nextState.periodSelected === 0 ? 12 : -12),
     //     backgroundUpdate: true,
@@ -98,18 +106,16 @@ export default class TimePicker extends React.Component {
   render() {
     const {
       date,
-      minuteSelected,
-      hourSelected,
-      periodSelected,
       hoursList,
       minutesList,
       periodsList
     } = this.state;
+    console.log(this.state.hourSelected);
     return (
       <View style={[{ flexDirection: 'row' }, this.state.style]}>
         <Picker
           style={[{ width: 50, height: 170 }, this.state.hourPickerStyle]}
-          selectedValue={hourSelected}
+          selectedValue={this.state.hourSelected}
           itemStyle={this.state.hourPickerItemStyle}
           curved={this.state.curved}
           cyclic={this.state.cyclic}
@@ -118,7 +124,7 @@ export default class TimePicker extends React.Component {
           indicatorSize={this.state.indicatorSize}
           indicatorColor={this.state.indicatorColor}
           onValueChange={(hourSelected) => {
-            this._onDateChange(date, hourSelected, minuteSelected);
+            this._onDateChange(date, hourSelected, this.state.minuteSelected);
             this.setState({
               hourSelected,
               backgroundUpdate: false,
@@ -132,7 +138,7 @@ export default class TimePicker extends React.Component {
         </Picker>
         <Picker
           style={[{ width: 50, height: 170 }, this.state.minutePickerStyle]}
-          selectedValue={minuteSelected}
+          selectedValue={this.state.minuteSelected}
           itemStyle={this.state.minutePickerItemStyle}
           curved={this.state.curved}
           cyclic={this.state.cyclic}
@@ -141,7 +147,7 @@ export default class TimePicker extends React.Component {
           indicatorSize={this.state.indicatorSize}
           indicatorColor={this.state.indicatorColor}
           onValueChange={(minuteSelected) => {
-            this._onDateChange(date, hourSelected, minuteSelected);
+            this._onDateChange(date, this.state.hourSelected, minuteSelected);
             this.setState({
               minuteSelected,
               backgroundUpdate: false,
@@ -156,7 +162,7 @@ export default class TimePicker extends React.Component {
         </Picker>
         <Picker
           style={[{ width: 50, height: 170 }, this.state.periodPickerStyle]}
-          selectedValue={periodSelected}
+          selectedValue={this.state.periodSelected}
           itemStyle={this.state.periodPickerItemStyle}
           atmospheric={this.state.atmospheric}
           cyclic={false}
@@ -164,10 +170,13 @@ export default class TimePicker extends React.Component {
           indicatorSize={this.state.indicatorSize}
           indicatorColor={this.state.indicatorColor}
           onValueChange={(periodSelected) => {
+            const hourSelected = this.state.hourSelected - (periodSelected === 0 ? 12 : -12);
             this.setState({
               periodSelected,
-              backgroundUpdate: false,
+              hourSelected,
+              backgroundUpdate: true,
             })
+            this._onDateChange(date, hourSelected, this.state.minuteSelected);
           }}>
             {periodsList.map((value, i) => (
               <Picker.Item label={`${value}`} value={i} key={"periodsList"+i}/>
