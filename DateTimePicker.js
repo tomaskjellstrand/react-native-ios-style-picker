@@ -40,7 +40,6 @@ getDays = (dateSelected, min, max) => {
       stopChecking = true;
     }
     l++;
-
     days.push({ date, label, });
   }
   return { days, def };
@@ -63,10 +62,8 @@ export default class DateTimePickerComponent extends React.Component {
       date,
       daySelected,
     } = this.state;
-    // console.log(daysList);
-    // console.log(daySelected);
     return (
-      <View style={{ flexDirection: 'row' }}>
+      <View style={[{ flexDirection: 'row' }, this.state.style]}>
         <Picker
           selectedValue={daySelected}
           style={[{ width: 100, height: 170 }, this.state.datePickerStyle]}
@@ -102,8 +99,6 @@ export default class DateTimePickerComponent extends React.Component {
           periodPickerItemStyle={this.state.periodPickerItemStyle}
           minutePickerItemStyle={this.state.minutePickerItemStyle}
           hourPickerItemStyle={this.state.hourPickerItemStyle}
-          curved={this.state.curved}
-          cyclic={this.state.cyclic}
           atmospheric={this.state.atmospheric}
           indicator={this.state.indicator}
           minuteInterval={this.state.minuteInterval}

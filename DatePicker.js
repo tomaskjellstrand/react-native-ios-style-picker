@@ -183,7 +183,7 @@ DatePickerComponent.defaultProps = {
   indicatorColor: '#ebebeb',
   indicatorSize: 1,
   curved: true,
-  atmospheric: false,
+  atmospheric: true,
   cyclic: true,
 };
 DatePickerComponent.propTypes = {
