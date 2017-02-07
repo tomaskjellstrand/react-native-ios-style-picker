@@ -72,22 +72,22 @@ export default class TimePicker extends React.Component {
     if (nextState.backgroundUpdate) {
       this._onDateChange(nextState.date, nextState.hourSelected, nextState.minuteSelected);
     }
-    if (!nextState.backgroundUpdate && (nextState.hourSelected !== this.state.hourSelected)) {
-      const isNewHourSelectedMorning = nextState.hourSelected - 12 < 0;
-      const isCurrentHourSelectMorning = this.state.hourSelected - 12 < 0;
-      if (isNewHourSelectedMorning !== isCurrentHourSelectMorning) {
-        this.setState({
-          periodSelected:  isNewHourSelectedMorning ? 0 : 1,
-          backgroundUpdate: true,
-        });
-      }
-    }
-    if (!nextState.backgroundUpdate && (nextState.periodSelected !== this.state.periodSelected)) {
-      this.setState({
-        hourSelected: nextState.hourSelected - (nextState.periodSelected === 0 ? 12 : -12),
-        backgroundUpdate: true,
-      });
-    }
+    // if (!nextState.backgroundUpdate && (nextState.hourSelected !== this.state.hourSelected)) {
+    //   const isNewHourSelectedMorning = nextState.hourSelected - 12 < 0;
+    //   const isCurrentHourSelectMorning = this.state.hourSelected - 12 < 0;
+    //   if (isNewHourSelectedMorning !== isCurrentHourSelectMorning) {
+    //     this.setState({
+    //       periodSelected:  isNewHourSelectedMorning ? 0 : 1,
+    //       backgroundUpdate: true,
+    //     });
+    //   }
+    // }
+    // if (!nextState.backgroundUpdate && (nextState.periodSelected !== this.state.periodSelected)) {
+    //   this.setState({
+    //     hourSelected: nextState.hourSelected - (nextState.periodSelected === 0 ? 12 : -12),
+    //     backgroundUpdate: true,
+    //   });
+    // }
   }
   _onDateChange = (date, hourSelected, minuteSelected) => {
     const momentDate = moment(date);
