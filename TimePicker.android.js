@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
-  Text,
   View,
 } from 'react-native';
 
@@ -26,7 +23,15 @@ getPeriods = (isPeriodCapitalized) => {
 
   return ['am', 'pm'];
 }
-
+getNewMinuteSelectedByNewMinuteInterval = (minute, minuteInterval) => {
+  const minuteModulus = (minute % minuteInterval);
+  // console.log(minuteModulus);
+  if ( minuteModulus !== 0) {
+    minute = minute - minuteModulus;
+  }
+  // console.log(minute);
+  return minute;
+}
 export class TimePicker extends React.Component {
   constructor(props) {
     super(props);
@@ -37,12 +42,13 @@ export class TimePicker extends React.Component {
       isPeriodCapitalized
     } = props;
     const hour = moment(date).hours();
-    const minute = moment(date).minutes();
+    let minute = moment(date).minutes();
     this.state = {
       ...props,
-      periodSelected: 0,
+      date,
+      periodSelected: parseInt(hour / 12),
       hourSelected: hour,
-      minuteSelected: minute,
+      minuteSelected: getNewMinuteSelectedByNewMinuteInterval(minute, minuteInterval),
       hoursList: getHours(),
       minutesList: getMinutes(minuteInterval),
       periodsList: getPeriods(isPeriodCapitalized),
@@ -50,17 +56,22 @@ export class TimePicker extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     var stateObj = this.state;
-    console.log(nextProps.minutesList, this.props.minutesList);
-    if (nextProps.minuteInterval !== this.props.minuteInterval) {
-      stateObj.minutesList = getMinutes(nextProps.minuteInterval);
-    }
+    // console.log(nextProps.minutesList, this.props.minutesList);
     stateObj = {
       ...stateObj,
       ...nextProps
     }
+    if (nextProps.minuteInterval !== this.props.minuteInterval) {
+      var { minuteSelected } = this.state;
+      stateObj.minuteSelected = getNewMinuteSelectedByNewMinuteInterval(minuteSelected, nextProps.minuteInterval);
+      stateObj.minutesList = getMinutes(nextProps.minuteInterval);
+    }
     this.setState(stateObj);
   }
   componentWillUpdate(nextProps, nextState) {
+    if (nextState.backgroundUpdate) {
+      this._onDateChange(nextState.date, nextState.hourSelected, nextState.minuteSelected);
+    }
     if (!nextState.backgroundUpdate && (nextState.hourSelected !== this.state.hourSelected)) {
       const isNewHourSelectedMorning = nextState.hourSelected - 12 < 0;
       const isCurrentHourSelectMorning = this.state.hourSelected - 12 < 0;
@@ -78,31 +89,12 @@ export class TimePicker extends React.Component {
       });
     }
   }
-  // renderPeriod = () => {
-  //   if (!this.state.is24Hrs) {
-  //     return (
-  //       <Picker
-  //         style={[{ width: 50, height: 170 }, this.state.periodPickerStyle]}
-  //         selectedValue={this.state.periodSelected}
-  //         itemStyle={this.state.periodPickerItemStyle}
-  //         atmospheric={this.state.atmospheric}
-  //         indicator={this.state.indicator}
-  //         indicatorSize={this.state.indicatorSize}
-  //         indicatorColor={this.state.indicatorColor}
-  //         onValueChange={(periodSelected) => {
-  //           this.setState({
-  //             periodSelected,
-  //             backgroundUpdate: false,
-  //           })
-  //         }}>
-  //           {this.state.periodsList.map((value, i) => (
-  //             <Picker.Item label={`${value}`} value={i} key={"periodsList"+value}/>
-  //           ))}
-  //       </Picker>
-  //     );
-  //   }
-  //   return <View/>;
-  // }
+  _onDateChange = (date, hourSelected, minuteSelected) => {
+    const momentDate = moment(date);
+    momentDate.hour(hourSelected);
+    momentDate.minute(minuteSelected);
+    this.props.onDateChange(momentDate.toDate());
+  }
   render() {
     const {
       date,
@@ -126,7 +118,7 @@ export class TimePicker extends React.Component {
           indicatorSize={this.state.indicatorSize}
           indicatorColor={this.state.indicatorColor}
           onValueChange={(hourSelected) => {
-            console.log('selectedHour', hourSelected);
+            this._onDateChange(date, hourSelected, minuteSelected);
             this.setState({
               hourSelected,
               backgroundUpdate: false,
@@ -149,6 +141,7 @@ export class TimePicker extends React.Component {
           indicatorSize={this.state.indicatorSize}
           indicatorColor={this.state.indicatorColor}
           onValueChange={(minuteSelected) => {
+            this._onDateChange(date, hourSelected, minuteSelected);
             this.setState({
               minuteSelected,
               backgroundUpdate: false,
@@ -187,7 +180,7 @@ export class TimePicker extends React.Component {
 TimePicker.defaultProps = {
   date: new Date(),
   onDateChange: () => {},
-  minuteInterval: 1,
+  minuteInterval: 30,
   isPeriodCapitalized: true,
   style: {},
   periodPickerStyle: {},

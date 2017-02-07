@@ -1,15 +1,12 @@
+
 import React, { Component } from 'react';
 import {
-  AppRegistry,
-  StyleSheet,
-  Text,
   View,
 } from 'react-native';
 
 import Picker from 'react-native-wheel-picker';
 import moment from 'moment';
 import _ from 'lodash';
-
 
 getNumberOfDaysInMonth = (date) => {
   return date.daysInMonth()
@@ -21,19 +18,34 @@ getDaysInMonth = (date) => {
   return days;
 }
 
+getYearList = (min, max) => {
+  console.log(min);
+  const now = moment();
+  var minDate = moment(min);
+  var maxDate = moment(max);
+  if (!minDate.isValid()) {
+    throw new Error('minDate is not a valid date string');
+  } else if (!maxDate.isValid()) {
+    throw new Error('maxDate is not a valid date string');
+  } else if (minDate.isAfter(maxDate)) {
+    throw new Error('maxDate should be after minDate');
+  }
+  console.log(minDate.format('llll'), maxDate.year());
+  return _.range(minDate.year(), maxDate.year());
+}
+
 export default class DatePickerComponent extends Component {
   constructor(props) {
     super(props);
-    console.log(props);
     const monthList = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const yearList = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
-    const dateSelected = moment(props.date).isValid ? moment(props.date) : moment();
+    const yearList = getYearList(props.minDate, props.maxDate);
+    const dateSelected = moment(props.date).isValid() ? moment(props.date) : moment();
     const yearSelected = dateSelected.year();
     const monthSelected = dateSelected.month();
     const daySelected = dateSelected.date();
     const daysList = getDaysInMonth(dateSelected);
     this.state = {
-      selectedItem: 0,
+      ...props,
       dateSelected,
       daysList,
       daySelected,
@@ -44,7 +56,6 @@ export default class DatePickerComponent extends Component {
     };
   }
   componentWillReceiveProps(nextProps) {
-    console.log('NEW PROPS');
     if (nextProps.date !== this.props.date) {
       const dateSelected = moment(nextProps.date).isValid ? moment(nextProps.date) : moment();
       const yearSelected = dateSelected.year();
@@ -52,6 +63,7 @@ export default class DatePickerComponent extends Component {
       const daySelected = dateSelected.date();
       const daysList = getDaysInMonth(dateSelected);
       this.setState({
+        ...nextProps,
         dateSelected,
         daysList,
         daySelected,
@@ -70,17 +82,17 @@ export default class DatePickerComponent extends Component {
     } = this.state;
     let { daySelected } = this.state;
     return (
-      <View style={{ flexDirection: 'row' }}>
+      <View style={[{ flexDirection: 'row' }, this.state.style]}>
         <Picker
           style={{ width: 100, height: 170 }}
           selectedValue={monthSelected}
-          itemStyle={{ color:"black", fontSize:18, textAlign: 'left' }}
-          curved
-          cyclic
-          atmospheric
-          indicator
-          indicatorSize={1}
-          indicatorColor="#ebebeb"
+          itemStyle={this.state.monthPickerItemStyle}
+          curved={this.state.curved}
+          cyclic={this.state.cyclic}
+          atmospheric={this.state.atmospheric}
+          indicator={this.state.indicator}
+          indicatorSize={this.state.indicatorSize}
+          indicatorColor={this.state.indicatorColor}
           onValueChange={(monthSelected) => {
             let date = moment({ year: yearSelected, month: monthSelected, day: daySelected });
             while (!date.isValid()) {
@@ -100,15 +112,15 @@ export default class DatePickerComponent extends Component {
             ))}
         </Picker>
         <Picker
-          style={{width: 75, height: 170}}
+          style={{width: 40, height: 170}}
           selectedValue={daySelected}
-          itemStyle={{color:"black", fontSize:18}}
-          curved
-          cyclic
-          atmospheric
-          indicator
-          indicatorSize={1}
-          indicatorColor="#ebebeb"
+          itemStyle={this.state.dayPickerItemStyle}
+          curved={this.state.curved}
+          cyclic={this.state.cyclic}
+          atmospheric={this.state.atmospheric}
+          indicator={this.state.indicator}
+          indicatorSize={this.state.indicatorSize}
+          indicatorColor={this.state.indicatorColor}
           onValueChange={(daySelected) => {
             // console.log(daySelected);
             let date = moment({ year: yearSelected, month: monthSelected, day: daySelected });
@@ -122,13 +134,13 @@ export default class DatePickerComponent extends Component {
         <Picker
           style={{width: 75, height: 170}}
           selectedValue={yearSelected}
-          itemStyle={{ color:"black", fontSize:18 }}
-          curved
-          cyclic
-          atmospheric
-          indicator
-          indicatorSize={1}
-          indicatorColor="#ebebeb"
+          itemStyle={this.state.yearPickerItemStyle}
+          curved={this.state.curved}
+          cyclic={this.state.cyclic}
+          atmospheric={this.state.atmospheric}
+          indicator={this.state.indicator}
+          indicatorSize={this.state.indicatorSize}
+          indicatorColor={this.state.indicatorColor}
           onValueChange={(yearSelected, i) => {
             let date = moment({ year: yearSelected, month: monthSelected, day: daySelected });
             while (!date.isValid()) {
@@ -152,18 +164,42 @@ export default class DatePickerComponent extends Component {
   }
 }
 
-const currentYear = moment().format('YYYY');
-const minYear = parseInt(currentYear) - 5;
-const maxYear = parseInt(currentYear) + 5;
+const currentYear = moment({ year: moment().year(), month: moment().month(), day: 15, hour: 0, minute: 0, ms: 0 });
+const minYear = currentYear.year() - 5;
+const maxYear = currentYear.year() + 5;
 
 DatePickerComponent.defaultProps = {
-  minDate: moment().set('year', minYear).format('llll'),
-  minDate: moment().set('year', maxYear).format('llll'),
+  minDate: currentYear.set('year', minYear).toDate(),
+  maxDate: currentYear.set('year', maxYear).toDate(),
   date: new Date(),
+  style: {},
+  yearPickerStyle: {},
+  monthPickerStyle: {},
+  dayPickerStyle: {},
+  yearPickerItemStyle: { color:"black", fontSize:18 },
+  monthPickerItemStyle: { color:"black", fontSize:18 },
+  dayPickerItemStyle: { color:"black", fontSize:18 },
+  indicator: true,
+  indicatorColor: '#ebebeb',
+  indicatorSize: 1,
+  curved: true,
+  atmospheric: false,
+  cyclic: true,
 };
 DatePickerComponent.propTypes = {
   date: React.PropTypes.object,
-  minDate: React.PropTypes.string,
-  maxDate: React.PropTypes.string,
+  minDate: React.PropTypes.object,
+  maxDate: React.PropTypes.object,
   onDateChange: React.PropTypes.func,
+  style: React.PropTypes.object,
+  yearPickerItemStyle: React.PropTypes.object,
+  monthPickerStyle: React.PropTypes.object,
+  yearPickerItemStyle: React.PropTypes.object,
+  monthPickerStyle: React.PropTypes.object,
+  indicator: React.PropTypes.bool,
+  indicatorSize: React.PropTypes.number,
+  indicatorColor: React.PropTypes.string,
+  curved: React.PropTypes.bool,
+  atmospheric: React.PropTypes.bool,
+  cyclic: React.PropTypes.bool,
 };
