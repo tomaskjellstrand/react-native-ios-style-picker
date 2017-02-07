@@ -3,7 +3,7 @@ import {
   View,
 } from 'react-native';
 
-import Picker from 'react-native-wheel-picker';
+import Picker from './Picker';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -32,7 +32,7 @@ getNewMinuteSelectedByNewMinuteInterval = (minute, minuteInterval) => {
   // console.log(minute);
   return minute;
 }
-export class TimePicker extends React.Component {
+export default class TimePicker extends React.Component {
   constructor(props) {
     super(props);
     const {

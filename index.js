@@ -8,9 +8,10 @@ import {
 	DatePickerIOS,
 } from 'react-native';
 
-import Picker from './Picker'
+import PickerAndroid from './Picker'
 import DatePickerAndroid from './DatePickerAndroid';
-const Picker = (Platform.OS === 'ios' ? PickerIOS : Picker);
+
+const Picker = (Platform.OS === 'ios' ? PickerIOS : PickerAndroid);
 const DatePicker = (Platform.OS === 'ios' ? DatePickerIOS : DatePickerAndroid);
 module.exports = {
 	Picker,

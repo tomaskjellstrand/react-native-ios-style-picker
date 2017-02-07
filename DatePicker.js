@@ -4,7 +4,7 @@ import {
   View,
 } from 'react-native';
 
-import Picker from 'react-native-wheel-picker';
+import Picker from './Picker';
 import moment from 'moment';
 import _ from 'lodash';
 

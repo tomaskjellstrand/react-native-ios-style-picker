@@ -1,8 +1,10 @@
-import React, { PropTypes } from 'react'
-
-import DatePicker from 'DatePicker';
-import DateTimePicker from 'DateTimePicker';
-import TimePicker from 'TimePicker';
+import React, { PropTypes } from 'react';
+import {
+  Text
+} from 'react-native';
+import DatePicker from './DatePicker.js';
+import DateTimePicker from './DateTimePicker.js';
+import TimePicker from './TimePicker.js';
 
 class DatePickerAndroid extends React.Component {
   constructor(props) {
@@ -23,17 +25,17 @@ class DatePickerAndroid extends React.Component {
     switch (mode) {
       case 'date':
         return (
-          <DatePicker props={props} />
+          <DatePicker {...this.props} />
         )
         break;
       case 'datetime':
         return (
-          <DateTimePicker props={props} />
+          <DateTimePicker {...this.props} />
         )
         break;
       case 'time':
         return (
-          <TimePicker props={props} />
+          <TimePicker {...this.props}/>
         )
         break;
       default:

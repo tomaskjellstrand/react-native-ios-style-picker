@@ -3,7 +3,8 @@ import {
   View,
 } from 'react-native';
 
-import Picker from 'react-native-wheel-picker';
+import Picker from './Picker';
+import TimePicker from './TimePicker';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -42,10 +43,9 @@ getDays = (dateSelected, min, max) => {
 
     days.push({ date, label, });
   }
-  console.log(days[def]);
   return { days, def };
 }
-export class DateTimePickerComponent extends React.Component {
+export default class DateTimePickerComponent extends React.Component {
   constructor(props) {
     super(props);
     const dateSelected = moment(props.date).isValid() ? moment(props.date) : moment();
@@ -63,8 +63,8 @@ export class DateTimePickerComponent extends React.Component {
       date,
       daySelected,
     } = this.state;
-    console.log(daysList);
-    console.log(daySelected);
+    // console.log(daysList);
+    // console.log(daySelected);
     return (
       <View style={{ flexDirection: 'row' }}>
         <Picker
