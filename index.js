@@ -10,10 +10,12 @@ import {
 
 import PickerAndroid from './Picker'
 import DatePickerAndroid from './DatePickerAndroid';
+import TimePicker from './TimePicker'
 
 const Picker = (Platform.OS === 'ios' ? PickerIOS : PickerAndroid);
 const DatePicker = (Platform.OS === 'ios' ? DatePickerIOS : DatePickerAndroid);
 module.exports = {
 	Picker,
 	DatePicker,
+	TimePicker,
 };
