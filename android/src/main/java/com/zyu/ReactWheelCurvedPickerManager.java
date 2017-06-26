@@ -23,6 +23,7 @@ public class ReactWheelCurvedPickerManager extends SimpleViewManager<ReactWheelC
 
     private static final int DEFAULT_TEXT_SIZE = 25 * 2;
     private static final int DEFAULT_ITEM_SPACE = 300 * 2;
+    private static final int DEFAULT_ITEM_ALIGN = 0;
     private static final int DEFAULT_INDICATOR_SIZE = 2 * 2;
 
     @Override
@@ -32,6 +33,7 @@ public class ReactWheelCurvedPickerManager extends SimpleViewManager<ReactWheelC
         picker.setSelectedItemTextColor(Color.DKGRAY);
         picker.setItemTextSize(DEFAULT_TEXT_SIZE);
         picker.setItemSpace(DEFAULT_ITEM_SPACE);
+        picker.setItemAlign(DEFAULT_ITEM_ALIGN);
         picker.setIndicatorSize(DEFAULT_INDICATOR_SIZE);
 
         return picker;
@@ -88,6 +90,13 @@ public class ReactWheelCurvedPickerManager extends SimpleViewManager<ReactWheelC
             picker.setItemSpace((int) PixelUtil.toPixelFromDIP(space));
         }
     }
+    @ReactProp(name="itemAlign")
+    public void setItemAlign(ReactWheelCurvedPicker picker, int alignment) {
+        if (picker != null) {
+            picker.setItemAlign(alignment);
+        }
+    }
+
 
     @ReactProp(name="cyclic", defaultBoolean = false)
     public void setCyclic(ReactWheelCurvedPicker picker, boolean cyclic) {

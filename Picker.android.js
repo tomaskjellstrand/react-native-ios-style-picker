@@ -16,6 +16,7 @@ var WheelCurvedPicker = React.createClass({
 		textSize: React.PropTypes.number,
 		itemStyle: React.PropTypes.object,
 		itemSpace: React.PropTypes.number,
+		itemAlign: React.PropTypes.number,
 		onValueChange: React.PropTypes.func,
 		selectedValue: React.PropTypes.any,
 		selectedIndex: React.PropTypes.number,
@@ -31,6 +32,7 @@ var WheelCurvedPicker = React.createClass({
 		return {
 			itemStyle : { color: 'white', fontSize:26 },
 			itemSpace: 20,
+			itemAlign: 0,
 			indicatorColor: '#ebebeb',
 			cyclic: true,
 			curved: true,
